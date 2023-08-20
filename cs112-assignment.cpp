@@ -46,6 +46,7 @@ class Employee {
 
    public:
     int id;
+    string permissionLevel;
 
     bool validatePassword(string userInput) { return userInput == password; }
 
@@ -65,22 +66,27 @@ class Employee {
              << endl;
     }
 
-    void viewRecord() {
+    virtual void viewRecord() {
         cout << "Gathering information for selected employee." << endl;
         standbyMessage();
     }
 
-    void searchRecords() {
+    virtual void searchRecords() {
         cout << "Gathering all employee records." << endl;
         standbyMessage();
     }
 
     virtual void displayMenu() {}
+    virtual void addRecord() {}
+    virtual void modifyRecord() {}
+    virtual void deleteRecord() {}
 
-    Employee(string userName, int userId, string userPassword) {
+    Employee(string userName, int userId, string userPassword,
+             string userPermission) {
         name = userName;
         id = userId;
         password = userPassword;
+        permissionLevel = userPermission;
     }
 };
 
@@ -88,7 +94,7 @@ class Employee {
 class HumanResources : public Employee {
    public:
     void displayMenu() {
-        Employee::welcomeUser("HUMAN RESOURCES (ADMIN).");
+        Employee::welcomeUser(Employee::permissionLevel);
         cout << "--------" << endl;
         cout << "Select an option by pressing the corresponding key on "
                 "your keyboard:"
@@ -117,15 +123,16 @@ class HumanResources : public Employee {
         standbyMessage();
     }
 
-    HumanResources(string userName, int userId, string userPassword)
-        : Employee(userName, userId, userPassword) {}
+    HumanResources(string userName, int userId, string userPassword,
+                   string userPermission)
+        : Employee(userName, userId, userPassword, userPermission) {}
 };
 
 // Creates a Management subclass that extends the Employee class.
 class Management : public Employee {
    public:
     void displayMenu() {
-        Employee::welcomeUser("MANAGEMENT");
+        Employee::welcomeUser(Employee::permissionLevel);
         cout << "--------" << endl;
         cout << "Select an option by pressing the corresponding key on "
                 "your keyboard:"
@@ -136,15 +143,16 @@ class Management : public Employee {
         cout << "--------" << endl;
     }
 
-    Management(string userName, int userId, string userPassword)
-        : Employee(userName, userId, userPassword) {}
+    Management(string userName, int userId, string userPassword,
+               string userPermission)
+        : Employee(userName, userId, userPassword, userPermission) {}
 };
 
 // Creates a GeneralEmployee subclass that extends the Employee class.
 class GeneralEmployee : public Employee {
    public:
     void displayMenu() {
-        Employee::welcomeUser("EMPLOYEE");
+        Employee::welcomeUser(Employee::permissionLevel);
         cout << "--------" << endl;
         cout << "Select an option by pressing the corresponding key on "
                 "your keyboard:"
@@ -160,21 +168,23 @@ class GeneralEmployee : public Employee {
     }
 
     void searchRecords() {
-        cout << "You are not authorized to search records." << endl;
+        cout << "Invalid input." << endl;
         standbyMessage();
     }
 
-    GeneralEmployee(string userName, int userId, string userPassword)
-        : Employee(userName, userId, userPassword) {}
+    GeneralEmployee(string userName, int userId, string userPassword,
+                    string userPermission)
+        : Employee(userName, userId, userPassword, userPermission) {}
 };
 
 /*
 Creates 3 test IDs / passwords for validation demo purposes.
 User input will be validated against this static content.
 */
-HumanResources hrDirector("Hannah", 1552, "pass123");
-Management midLevelManager("Michael", 2461, "pass456");
-GeneralEmployee associate("Gillian", 7717, "pass789");
+HumanResources hrDirector("Hannah", 1552, "pass123",
+                          "HUMAN RESOURCES (ADMIN).");
+Management midLevelManager("Michael", 2461, "pass456", "MANAGEMENT");
+GeneralEmployee associate("Gillian", 7717, "pass789", "EMPLOYEE");
 Employee* employeeArray[3] = {&hrDirector, &midLevelManager, &associate};
 
 /*
@@ -234,14 +244,34 @@ int main() {
             cin.clear();
             cin.ignore(1000, '\n');
 
-            // switch (selectedOption) {
-            //     case 1:
-            //     case 2:
-            //     case 3:
-            //     case 4:
-            //     case 5:
-            //     default:
-            // }
+            switch (selectedOption) {
+                case 1:  // view record
+                    activeEmployee->viewRecord();
+                    break;
+                case 2:  // search records
+                    activeEmployee->searchRecords();
+                    break;
+                case 3:  // add record
+                    if (activeEmployee->permissionLevel ==
+                        "HUMAN RESOURCES (ADMIN).") {
+                        activeEmployee->addRecord();
+                        break;
+                    }
+                case 4:  // modify record
+                    if (activeEmployee->permissionLevel ==
+                        "HUMAN RESOURCES (ADMIN).") {
+                        activeEmployee->modifyRecord();
+                        break;
+                    }
+                case 5:  // delete record
+                    if (activeEmployee->permissionLevel ==
+                        "HUMAN RESOURCES (ADMIN).") {
+                        activeEmployee->deleteRecord();
+                        break;
+                    }
+                default:
+                    cout << "Invalid input." << endl;
+            }
         }
         activeEmployee->logoutUser();
     }
