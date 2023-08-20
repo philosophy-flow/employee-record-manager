@@ -1,3 +1,33 @@
+/* H **********************************************************************
+ * FILENAME: cs112-assignment.cpp
+ *
+ * DESCRIPTION:
+ *      This is a simple employee management system.The user can enter an ID /
+ *      password, and if successfully validated access a number of options based
+ *      on their permission level.
+ *
+ * CLASSES:
+ *      Employee (base class)
+ *          -- ID, name, and password members
+ *          -- informational methods (welcome, standby, logout)
+ *          -- shared methods (view, search, validate)
+ *      HumanResources (derived class)
+ *          -- specific methods (add, modify, delete) & menu method
+ *      Management (derived class)
+ *          -- menu method
+ *      GeneralEmployee (derived class)
+ *          -- overriden methods (view, search) & menu method
+ *
+ * FUNCTIONS:
+ *  validateEmployee:
+ *      This function takes an array of Employee pointers and the length of the
+ *      array (employee count). The function prompts the user for an ID /
+ *      password and then checks the input against each employee's data.
+ *
+ * AUTHOR: Jacob Stewart
+ * START DATE: 08/19/23
+ * H *********************************************************************/
+
 #include <iostream>
 #include <string>
 using namespace std;
