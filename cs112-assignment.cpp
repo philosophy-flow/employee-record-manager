@@ -61,9 +61,8 @@ class Employee {
     }
 
     void standbyMessage() {
-        cout << "Please standby for more options, or press (6) to exit the "
-                "program."
-             << endl;
+        cout << "Please standby for more options..." << endl;
+        cout << "--------" << endl;
     }
 
     virtual void viewRecord() {
@@ -169,7 +168,7 @@ class GeneralEmployee : public Employee {
 
     void searchRecords() {
         cout << "Invalid input." << endl;
-        standbyMessage();
+        cout << "--------" << endl;
     }
 
     GeneralEmployee(string userName, int userId, string userPassword,
@@ -229,12 +228,8 @@ Employee* validateUser(Employee* inputArray[], int employeeCount) {
     return 0;
 }
 
-int main() {
-    // Validates and sets active employee
-    Employee* activeEmployee = validateUser(
-        employeeArray, sizeof(employeeArray) / sizeof(employeeArray[0]));
-
-    // Enters main program loop - user can select an option or close the app
+// Main program loop. Handles option selection & logout
+void mainLoop(Employee* activeEmployee) {
     if (activeEmployee) {
         int selectedOption = 0;
         while (selectedOption != 6) {
@@ -269,16 +264,24 @@ int main() {
                         activeEmployee->deleteRecord();
                         break;
                     }
+                case 6:  // logout
+                    activeEmployee->logoutUser();
+                    break;
                 default:
                     cout << "Invalid input." << endl;
+                    cout << "--------" << endl;
             }
         }
-        activeEmployee->logoutUser();
     }
+}
 
-    // Program should start, welcome the user, and request login
-    // credentials. Depending on user type, different options should be
-    // displayed. Each option will correspond to a method on the subclass.
+int main() {
+    // Validates and sets active employee
+    Employee* activeEmployee = validateUser(
+        employeeArray, sizeof(employeeArray) / sizeof(employeeArray[0]));
+
+    // Enters main program loop - user can select an option or close the app
+    mainLoop(activeEmployee);
 
     return 0;
 }
