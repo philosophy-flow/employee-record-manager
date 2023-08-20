@@ -11,22 +11,13 @@ int main() {
     Protected members are initialized via the constructor when an instance of
     the class is created.
     */
-
     class Employee {
        protected:
         string name;
         string password;
-        int id;
 
        public:
-        void welcomeUser() {
-            cout << " " << endl;
-            cout << "**************************************" << endl;
-            cout << "EMPLOYEE MANAGEMENT INFORMATION SYSTEM" << endl;
-            cout << "**************************************" << endl;
-            cout << " " << endl;
-            cout << "Hello, " << name << " - welcome to the Program." << endl;
-        }
+        int id;
 
         void logoutUser() {
             cout
@@ -57,11 +48,10 @@ int main() {
     };
 
     // Creates a HumanResources subclass that extends the Employee class.
-
     class HumanResources : public Employee {
        public:
         void welcomeUser() {
-            Employee::welcomeUser();
+            cout << "Hello, " << name << " - welcome to the Program." << endl;
             cout << "Your permission level is: HUMAN RESOURCES (ADMIN)."
                  << endl;
         }
@@ -100,11 +90,10 @@ int main() {
     };
 
     // Creates a Management subclass that extends the Employee class.
-
     class Management : public Employee {
        public:
         void welcomeUser() {
-            Employee::welcomeUser();
+            cout << "Hello, " << name << " - welcome to the Program." << endl;
             cout << "Your permission level is: MANAGEMENT." << endl;
         }
 
@@ -123,16 +112,11 @@ int main() {
             : Employee(userName, userId, userPassword) {}
     };
 
-    /*
-    Creates a GeneralEmployee subclass that extends the Employee class.
-    Note that the 'private' access specifier restricts unneeded base class
-    methods.
-    */
-
-    class GeneralEmployee : private Employee {
+    // Creates a GeneralEmployee subclass that extends the Employee class.
+    class GeneralEmployee : public Employee {
        public:
         void welcomeUser() {
-            Employee::welcomeUser();
+            cout << "Hello, " << name << " - welcome to the Program." << endl;
             cout << "Your permission level is: EMPLOYEE." << endl;
         }
 
@@ -151,21 +135,67 @@ int main() {
             standbyMessage();
         }
 
+        void searchRecords() {
+            cout << "You are not authorized to search records." << endl;
+            standbyMessage();
+        }
+
         GeneralEmployee(string userName, int userId, string userPassword)
             : Employee(userName, userId, userPassword) {}
     };
 
-    // Create 3 test IDS / passwords, 1 for each subclass. User input will
-    // be validated against this static content. Note that password
-    // information would typically be pulled in from a server (and
-    // encrypted)
+    /*
+    Creates 3 test IDs / passwords for validation demo purposes.
+    User input will be validated against this static content.
+    */
+    static HumanResources hrDirector("Hannah", 1552, "pass123");
+    static Management midLevelManager("Michael", 2461, "pass456");
+    static GeneralEmployee associate("Gillian", 7717, "pass789");
+    Employee* employeeArray[3] = {&hrDirector, &midLevelManager, &associate};
+
+    // Prints introductory program text
+    cout << " " << endl;
+    cout << "**************************************" << endl;
+    cout << "EMPLOYEE MANAGEMENT INFORMATION SYSTEM" << endl;
+    cout << "**************************************" << endl;
+    cout << " " << endl;
+
+    // Gets ID input from user
+    int userId;
+    cout << "Enter your Employee ID: ";
+    cin >> userId;
+
+    // Clears any errors from first input and prepare cin for second input
+    cin.clear();
+    cin.ignore(1000, '\n');
+
+    // Gets password input from user
+    string userPassword;
+    cout << "Enter your password: ";
+    getline(cin, userPassword);
+    cout << endl;
+
+    /*
+    Searches existing employee IDs and attempts to match user input.
+    If ID match, then validates the password. Else, alerts user.
+    */
+
+    bool userFound = false;
+    for (Employee* employee : employeeArray) {
+        if (employee->id == userId) {
+            userFound = true;
+            cout << "password validation here" << endl;
+            // validate password here
+            break;
+        }
+    }
+    if (!userFound) {
+        cout << "Employee not found. Please enter another ID." << endl;
+    }
 
     // Program should start, welcome the user, and request login
     // credentials. Depending on user type, different options should be
     // displayed. Each option will correspond to a method on the subclass.
-
-    Management me("Jacob", 7, "myPass");
-    me.viewRecord();
 
     return 0;
 }
